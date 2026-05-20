@@ -1,32 +1,80 @@
-# Gen-AI Document Assistant
+# 📄 Gen-AI Document Assistant
 
-A Retrieval-Augmented Generation (RAG) web application powered by **LangChain**, **OpenAI GPT-3.5**, and **FastAPI**.
+A **Retrieval-Augmented Generation (RAG)** web application that lets you upload documents and ask natural language questions — powered by **Groq LLaMA 3**, **Prompt Engineering**, and **FastAPI**.
 
-Upload PDF/TXT documents and ask natural language questions — the app retrieves relevant chunks and generates accurate answers using two prompt engineering techniques: **Chain-of-Thought** and **Few-Shot Prompting**.
+> Built as part of exploring Generative AI application development with real-world data pipelines.
 
 ---
 
-## Tech Stack
+## 🚀 Live Demo
+
+Upload any PDF or TXT → Ask a question → Get AI-powered answers with source references.
+
+![Demo](https://img.shields.io/badge/Status-Live-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
+![Groq](https://img.shields.io/badge/LLM-Groq%20LLaMA3-orange)
+
+---
+
+## 🧠 What is RAG?
+
+**Retrieval-Augmented Generation (RAG)** is a technique where:
+1. Documents are split into chunks and indexed
+2. When a question is asked, the most relevant chunks are **retrieved**
+3. Those chunks are passed as context to an **LLM** to generate an accurate answer
+
+This reduces hallucination and keeps answers grounded in your actual documents.
+
+---
+
+## ⚙️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| LLM | OpenAI GPT-3.5-turbo |
-| RAG Framework | LangChain |
-| Vector Store | FAISS (in-memory) |
-| Embeddings | OpenAI text-embedding-ada-002 |
+| LLM | Groq API (LLaMA 3.3 70B) |
 | Backend | FastAPI + Uvicorn |
+| Document Processing | PyPDF, custom chunking pipeline |
+| Similarity Search | TF-based cosine similarity |
 | Frontend | Vanilla HTML/CSS/JS |
 | Containerization | Docker |
 
 ---
 
-## Project Structure
+## 🔬 Prompt Engineering Techniques
+
+Two techniques implemented and switchable from the UI:
+
+### 1. Chain-of-Thought (CoT) Prompting
+Instructs the LLM to reason step-by-step before answering. Better for complex, multi-part questions.
+
+```
+Steps:
+1. Find relevant info in context.
+2. Reason through the question.
+3. Give a clear answer based only on context.
+Final Answer: ...
+```
+
+### 2. Few-Shot Prompting
+Provides the LLM with 2 worked examples showing expected input-output format. Better for factual, direct lookups.
+
+```
+Example 1:
+Context: "The company was founded in 2010."
+Question: When was it founded?
+Answer: The company was founded in 2010.
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 gen-ai-doc-assistant/
 ├── backend/
-│   ├── main.py          # FastAPI routes
-│   └── rag_pipeline.py  # LangChain RAG logic + Prompt Engineering
+│   ├── main.py          # FastAPI routes (upload, query, list, delete)
+│   └── rag_pipeline.py  # RAG logic + Prompt Engineering
 ├── frontend/
 │   └── index.html       # Web UI
 ├── data/                # Uploaded documents stored here
@@ -37,133 +85,96 @@ gen-ai-doc-assistant/
 
 ---
 
-## Setup & Run (Without Docker)
+## 🛠️ Setup & Run
 
-### Step 1 — Prerequisites
+### Prerequisites
+- Python 3.10+
+- Groq API key (free at [console.groq.com](https://console.groq.com))
 
-- Python 3.10 or above installed
-- OpenAI API key (get from https://platform.openai.com/api-keys)
-
-### Step 2 — Clone / Download the project
+### Installation
 
 ```bash
+# 1. Clone the repo
 git clone https://github.com/jiya-ranjan/gen-ai-doc-assistant.git
 cd gen-ai-doc-assistant
-```
 
-### Step 3 — Create virtual environment
-
-```bash
+# 2. Create virtual environment
 python -m venv venv
 
 # Windows:
 venv\Scripts\activate
-
 # Mac/Linux:
 source venv/bin/activate
-```
 
-### Step 4 — Install dependencies
-
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-### Step 5 — Set your OpenAI API Key
+# 4. Set API key
+# Windows CMD:
+set GROQ_API_KEY=your_groq_api_key_here
+# Mac/Linux:
+export GROQ_API_KEY=your_groq_api_key_here
 
-**Windows (Command Prompt):**
-```cmd
-set OPENAI_API_KEY=sk-your-key-here
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:OPENAI_API_KEY="sk-your-key-here"
-```
-
-**Mac/Linux:**
-```bash
-export OPENAI_API_KEY="sk-your-key-here"
-```
-
-### Step 6 — Run the server
-
-```bash
+# 5. Run server
 cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-### Step 7 — Open in browser
-
-Go to: **http://localhost:8000**
+### Open in browser
+**http://localhost:8000**
 
 ---
 
-## Setup & Run (With Docker)
-
-### Step 1 — Build the image
+## 🐳 Run with Docker
 
 ```bash
 docker build -t gen-ai-doc-assistant .
+docker run -p 8000:8000 -e GROQ_API_KEY=your_key_here gen-ai-doc-assistant
 ```
-
-### Step 2 — Run the container
-
-```bash
-docker run -p 8000:8000 -e OPENAI_API_KEY=sk-your-key-here gen-ai-doc-assistant
-```
-
-### Step 3 — Open in browser
-
-Go to: **http://localhost:8000**
 
 ---
 
-## How to Use
-
-1. **Upload a document** — Click the upload zone, select a PDF or TXT file, click "Upload"
-2. **Ask a question** — Type your question in the text box
-3. **Choose prompt technique:**
-   - ✅ Checked = **Chain-of-Thought** (thinks step-by-step, better for complex questions)
-   - ☐ Unchecked = **Few-Shot** (uses examples, better for factual lookups)
-4. Click **Ask** and get your answer with source references
-
----
-
-## API Endpoints
+## 📡 API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/upload` | Upload a PDF or TXT document |
+| POST | `/upload` | Upload PDF or TXT document |
 | POST | `/query` | Ask a question about uploaded docs |
 | GET | `/documents` | List uploaded documents |
 | DELETE | `/documents` | Clear all documents |
 
-### Example API call (curl):
+---
 
-```bash
-# Upload a file
-curl -X POST http://localhost:8000/upload \
-  -F "file=@my_document.pdf"
+## 💡 How It Works
 
-# Ask a question
-curl -X POST http://localhost:8000/query \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What is the main topic?", "use_chain_of_thought": true}'
+```
+User uploads PDF/TXT
+        ↓
+Document split into 400-word chunks
+        ↓
+Each chunk stored with TF-based embedding
+        ↓
+User asks question
+        ↓
+Top 4 most similar chunks retrieved (cosine similarity)
+        ↓
+Context + Prompt (CoT or Few-Shot) sent to Groq LLaMA 3
+        ↓
+Answer returned with source references
 ```
 
 ---
 
-## Key Concepts Implemented
+## 🎯 Key Learnings
 
-### 1. RAG (Retrieval-Augmented Generation)
-Documents are split into 500-token chunks → embedded using OpenAI embeddings → stored in FAISS vector store. On each query, top-4 most similar chunks are retrieved and passed to the LLM as context.
+- Implemented **RAG pipeline** from scratch — chunking, indexing, retrieval, generation
+- Applied **two prompt engineering techniques** with measurable impact on answer quality
+- Built and deployed a **REST API** with FastAPI handling file uploads and async requests
+- Handled **real-world data preprocessing** — PDF parsing, text cleaning, chunk overlap strategy
+- Integrated **LLM API** (Groq) for production-grade text generation
 
-### 2. Chain-of-Thought Prompting
-The prompt instructs the LLM to reason step-by-step before answering, reducing hallucinations on complex queries.
+---
 
-### 3. Few-Shot Prompting
-The prompt includes 2 worked examples showing the LLM the expected input-output format, improving consistency on factual lookups.
+## 📬 Contact
 
-### 4. Data Preprocessing Pipeline
-Uploaded files go through: loading → chunking (RecursiveCharacterTextSplitter) → embedding → FAISS indexing — before any query is answered.
+**Jiya Ranjan** — [LinkedIn](https://www.linkedin.com/in/jiya-ranjan55) | [GitHub](https://github.com/jiya-ranjan)
