@@ -37,7 +37,6 @@ This reduces hallucination and keeps answers grounded in your actual documents.
 | Document Processing | PyPDF, custom chunking pipeline |
 | Similarity Search | TF-based cosine similarity |
 | Frontend | Vanilla HTML/CSS/JS |
-| Containerization | Docker |
 
 ---
 
@@ -79,7 +78,6 @@ gen-ai-doc-assistant/
 │   └── index.html       # Web UI
 ├── data/                # Uploaded documents stored here
 ├── requirements.txt
-├── Dockerfile
 └── README.md
 ```
 
@@ -122,15 +120,6 @@ uvicorn main:app --reload --port 8000
 
 ### Open in browser
 **http://localhost:8000**
-
----
-
-## 🐳 Run with Docker
-
-```bash
-docker build -t gen-ai-doc-assistant .
-docker run -p 8000:8000 -e GROQ_API_KEY=your_key_here gen-ai-doc-assistant
-```
 
 ---
 
