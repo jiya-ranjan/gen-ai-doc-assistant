@@ -37,6 +37,8 @@ This reduces hallucination and keeps answers grounded in your actual documents.
 | Document Processing | PyPDF, custom chunking pipeline |
 | Similarity Search | TF-based cosine similarity |
 | Frontend | Vanilla HTML/CSS/JS |
+| Containerization | Docker |
+
 
 ---
 
