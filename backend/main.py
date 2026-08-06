@@ -7,7 +7,7 @@ import os
 import shutil
 from pathlib import Path
 
-from rag_pipeline import RAGPipeline
+from backend.rag_pipeline import RAGPipeline
 
 app = FastAPI(title="Gen-AI Document Assistant", version="1.0.0")
 
